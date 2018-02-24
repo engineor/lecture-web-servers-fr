@@ -1,0 +1,10 @@
+language: php
+php:
+  - 7.2
+env:
+  global:
+    secure: nGLG0vjQLRSCdXOM7SppaO8jJsxHuYVY5C0/wa+08PlEBT4ingvXpIX+IEqaSyxkchDFQjdSuQgxOAmwbohzAXW3jpQp3PUIajvIiV/3Uy/oPR5WvjxE25dS36ONk6g0T/1Uip8PuAP8zqcMcXHv/oJPfs9Qr2O1DHWglu422xmS/5nWai66Wi0E1HElzE4lVWSmk5c/JbrOWwkGrMKSGA4LeLA6setNfpyvDA5IsqOy5NP12jeT4arG4iX1kfDddheEzaSHjyHLH2AEyRP8myD4eQgzkxSSXNTrL8XoXD8wDCgDC85/C/a6bDWEPfoTgZ/1ek39heOkbfhVZOV3Zu3YKGTuIke1oEi9K0fAqkUSB2cUG0FLeW/8ldqNL4fbbij6hfBOrV5DCrw3j+b7S42cIglBakVTTdvFMQX1/aEX/Js+17lefiLF1+6CLJ1etL7zJ5iS5sn4ykGpuUtLOt556ek0oHs+/xBn20M53R58jEfNrY3u1e4p+wjo4VvyM7msXo0XlU1l44T1Qa3peFY1Ch2n3Bo7MoGSXD/kMNmMCQNkVfOYko9yB21RvID8uYNu8pFlxND+BTmf0twFz4uQ+KWGN90Gmp/vAGLEl0bSn5XOYeJ6QwwkEw06Hop5YksyBaTmpySgbMygTg2QNj6jL276MsZu49tymr/EVbg=
+before_script:
+  - composer install --no-progress
+script:
+  - vendor/bin/couscous travis-auto-deploy
