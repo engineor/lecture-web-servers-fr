@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Cours serveurs web</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                Cours serveurs web
+                <small class="hidden-xs hidden-sm">
+                    Engineor
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container-fluid">
+            <div class="row">
+
+                
+                    <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/">
+                                        Introduction
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/00-prerequisites">
+                                        Prérequis
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/01-101-server-web-theory">
+                                        Les bases
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/02-cgi">
+                                        CGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/03-fastcgi">
+                                        FastCGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/04-virtualhost">
+                                        Virtualhost
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/05-php-apache-httpd">
+                                        Apache httpd et PHP
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/06-php-multitenant">
+                                        PHP multi utilisateur
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/07-php-multiple-versions">
+                                        PHP plusieurs versions
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/08-php-scalability">
+                                        PHP évolutif
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/09-security">
+                                        Sécurité
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/10-databases">
+                                        Bases de données
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/11-web-hosting">
+                                        Hébergement web
+                                    </a>
+                                </li>
+                                                    </ul>
+
+                    </nav>
+
+                
+                <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <h1 id="cours--serveurs-web">Cours : Serveurs web</h1>
+<p>Ce cours en français est conçu à destination d'élèves de 5ème année à l'<a href="https://www.ecole-ipssi.com/">IPSSI</a>. Il a cependant vocation à évoluer, comme indiqué à la fin de cette documentation (rubrique <code>Contribuer</code>).</p>
+<p>Le contenu et les exemples sont principalement basés sur PHP et son écosystème, bien que les concepts soient les mêmes avec tous les langages et systèmes d'exploitation.</p>
+<h2 id="plan-du-cours">Plan du cours</h2>
+<ol start="0">
+<li><a href="00-prerequisites">Prérequis</a></li>
+<li><a href="01-101-server-web-theory">Web, requête http et serveurs web, les bases</a></li>
+<li><a href="02-cgi">Mettre du contenu dynamique dans une page web avec CGI</a></li>
+<li><a href="03-fastcgi">Mettre du contenu dynamique dans une page web avec FastCGI</a></li>
+<li><a href="04-virtualhost">Virtualhost : mettre plusieurs sites sur un même serveur</a></li>
+<li><a href="05-php-apache-httpd">Executer PHP avec Apache httpd, les stratégies disponibles</a></li>
+<li><a href="06-php-multitenant">Executer PHP avec différents utilisateurs</a></li>
+<li><a href="07-php-multiple-versions">Executer différentes versions de PHP dans le cadre d'une requête web</a></li>
+<li><a href="08-php-scalability">Rendre l'execution de PHP évolutive (scalable)</a></li>
+<li><a href="09-security">Sécurité : les concepts de base</a></li>
+<li><a href="10-databases">Bases de données : communication et réplication</a></li>
+<li><a href="11-web-hosting">L'hébergement web</a></li>
+</ol>
+<h2 id="contribuer">Contribuer</h2>
+<p>Pour contribuer, merci de faire un fork puis une PR directement sur la master.</p>
+<p>Toute contribution doit être intégralement rédigée en français.</p>
+<p>Pour chaque proposition, il faut inclure à la fois la théorie et la pratique associée</p>
+<p>Les exemples doivent :</p>
+<ul>
+<li>être basés sur Docker, de préférence sur une ou des images déjà utilisées dans les autres exercices / démos</li>
+<li>être réalisables en copiant collant les lignes sans réfléchir</li>
+<li>être facilement lisible, les extraits de code long (fichiers html) doivent être extraits et mis dans des dossiers <code>demoX</code></li>
+<li>contenir des commandes et des images dont les liens sont relatifs à la racine du projet</li>
+</ul>
+<p>Toutes ces règles sont ici à titre d'indication, toute PR est la bienvenue mais ces règles seront discutées dans les PR respectivement.</p>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container-fluid">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>
