@@ -49,3 +49,5 @@ menu:
     webhosting:
       text: Hébergement web
       relativeUrl: 11-web-hosting
+
+baseUrl: https://lab.engineor.com/lecture-web-servers-fr/
