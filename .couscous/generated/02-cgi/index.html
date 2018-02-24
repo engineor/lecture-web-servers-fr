@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Cours serveurs web</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                Cours serveurs web
+                <small class="hidden-xs hidden-sm">
+                    Engineor
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container-fluid">
+            <div class="row">
+
+                
+                    <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/">
+                                        Introduction
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/00-prerequisites">
+                                        Prérequis
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/01-101-server-web-theory">
+                                        Les bases
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/02-cgi">
+                                        CGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/03-fastcgi">
+                                        FastCGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/04-virtualhost">
+                                        Virtualhost
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/05-php-apache-httpd">
+                                        Apache httpd et PHP
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/06-php-multitenant">
+                                        PHP multi utilisateur
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/07-php-multiple-versions">
+                                        PHP plusieurs versions
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/08-php-scalability">
+                                        PHP évolutif
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/09-security">
+                                        Sécurité
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/10-databases">
+                                        Bases de données
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/11-web-hosting">
+                                        Hébergement web
+                                    </a>
+                                </li>
+                                                    </ul>
+
+                    </nav>
+
+                
+                <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <h1 id="un-site-dynamique-avec-cgi">Un site dynamique avec CGI</h1>
+<h2 id="quest-ce-que-cgi---common-gateway-interface">Qu'est-ce que CGI - Common Gateway Interface</h2>
+<h3 id="dfinition">Définition</h3>
+<p>D'après <a href="https://fr.wikipedia.org/wiki/Common_Gateway_Interface">Wikipedia</a> :</p>
+<blockquote>
+<p>La Common Gateway Interface (littéralement « Interface de passerelle commune »), généralement abrégée CGI, est une interface utilisée par les serveurs HTTP. Elle a été normalisée par la RFC 38751.</p>
+</blockquote>
+<p><img src="02-cgi/images/cgi-wikipedia.png" alt="" /></p>
+<p>La CGI permets donc au serveur http de lancer l'exécution d'un logiciel sur la machine et d'en récupérer le résultat.</p>
+<p><img src="02-cgi/images/cgi-sequence.png" alt="" /></p>
+<h3 id="limitations">Limitations</h3>
+<p>La CGI créé un nouveau processus sur la machine à chaque requête, ce qui a donc un coup d'exécution assez lourd.</p>
+<p>Elle ne permet pas non plus une gestion granulaire des droits, les scripts étant executés avec l'utilisateur du serveur http.</p>
+<p>Enfin, elle ne permets pas une évolutivité horizontale, car les processus sont créés sur la machine du serveur http.</p>
+<h3 id="tldr">TL;DR</h3>
+<p>La Common Gateway Interface permet d'ajouter au serveur http la capacité d'utiliser un logiciel.</p>
+<p>Facile à mettre en place et pratique pour un site à forte charge, elle est lente et lourde et ne permets pas une évolutivité horizontale.</p>
+<h2 id="crer-lenvironnement">Créer l'environnement</h2>
+<p>Pour commencer, nous allons construire un environnement contenant :</p>
+<ul>
+<li>Apache httpd</li>
+<li>Python3</li>
+<li>PHP (version 5 cgi pour faire simple)</li>
+<li>Apache httpd mod_cgi actif</li>
+</ul>
+<h3 id="limage-docker">L'image Docker</h3>
+<p>Pour se faire, en partant de l'image Docker <code>httpd:latest</code>, nous allons utiliser un Dockerfile pour ajouter <code>python3</code>, <code>php5-cgi</code> et le mode CGI qui manquent à notre liste.</p>
+<pre><code>FROM httpd:latest
+
+RUN apt-get update &amp;&amp; apt-get install -y python3 php5-cgi</code></pre>
+<p>Ce fichier est disponible dans le dossier <code>02-cgi/config</code>, et nous appellerons l'image <code>serveur-web-cgi</code>.</p>
+<pre><code>docker build -t serveur-web-cgi 02-cgi/config</code></pre>
+<p>Nous pouvons maintenant utiliser l'image <code>serveur-web-cgi</code> qui contient les executables pour PHP et python :</p>
+<pre><code>docker run --rm serveur-web-cgi which php-cgi</code></pre>
+<blockquote>
+<p>/usr/bin/php-cgi</p>
+</blockquote>
+<pre><code>docker run --rm serveur-web-cgi which python3</code></pre>
+<blockquote>
+<p>/usr/bin/python3</p>
+</blockquote>
+<pre><code>docker run --rm serveur-web-cgi ls /usr/local/apache2/modules/mod_cgi.so</code></pre>
+<blockquote>
+<p>/usr/local/apache2/modules/mod_cgi.so</p>
+</blockquote>
+<h3 id="configuration-dapache-httpd">Configuration d'Apache httpd</h3>
+<p>Le mode CGI est activé sur Apache httpd, comme énoncé dans les instructions précédemment énoncées.</p>
+<p>L'image <code>serveur-web-cgi</code> étant basé sur <code>httpd:latest</code>, les configurations se trouvent dans les répertoires indiqués dans le chapitre <a href="01-101-server-web-theory">Théorie des serveurs web</a></p>
+<p>Dans le fichier <code>httpd.conf</code>, il faut trouver la ligne <code>#LoadModule cgi_module modules/mod_cgi.so</code> et la décommenter (enlever le <code>#</code>).</p>
+<p>La configuration que nous allons charger devra donc contenir cette version modifiée du fichier <code>httpd.conf</code>. Ce fichier changera selon les exemples, on le créera donc dans chaque section à venir.</p>
+<h2 id="demo--exercice--criture-dun-cgi-servant-une-page-simple">Demo / Exercice : écriture d'un CGI servant une page simple</h2>
+<h3 id="afficher-une-page-html-simple">Afficher une page HTML simple</h3>
+<p>Le fichier de configuration modifié est disponible dans le dossier <code>02-cgi/config</code>, avec <code>mod_cgi</code> activé.</p>
+<p>Les configurations à changer sont les suivantes :</p>
+<pre><code class="language-apache">LoadModule mpm_event_module modules/mod_mpm_event.so
+#LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
+
+&lt;IfModule mpm_prefork_module&gt;
+    #LoadModule cgi_module modules/mod_cgi.so
+&lt;/IfModule&gt;
+
+LoadModule alias_module modules/mod_alias.so
+
+&lt;IfModule alias_module&gt;
+    #
+    # ScriptAlias: This controls which directories contain server scripts. 
+    # ScriptAliases are essentially the same as Aliases, except that
+    # documents in the target directory are treated as applications and
+    # run by the server when requested rather than as documents sent to the
+    # client.  The same rules about trailing "/" apply to ScriptAlias
+    # directives as to Alias.
+    #
+    ScriptAlias /cgi-bin/ "/usr/local/apache2/cgi-bin/"
+
+&lt;/IfModule&gt;
+
+&lt;Directory "/usr/local/apache2/cgi-bin"&gt;
+    AllowOverride None
+    Options None
+    Require all granted
+&lt;/Directory&gt;
+
+&lt;IfModule mime_module&gt;
+    #
+    # AddHandler allows you to map certain file extensions to "handlers":
+    # actions unrelated to filetype. These can be either built into the server
+    # or added with the Action directive (see below)
+    #
+    # To use CGI scripts outside of ScriptAliased directories:
+    # (You will also need to add "ExecCGI" to the "Options" directive.)
+    #
+    #AddHandler cgi-script .cgi
+&lt;/IfModule&gt;</code></pre>
+<p>La première chose à faire est de changer le <a href="https://httpd.apache.org/docs/2.4/fr/mpm.html">module multi-processus</a>. En effet, CGI fonctionnant avec des créations de multiples processus, il faut utiliser le mode prefork à la place du mode evènement. Il faut donc commenter la première ligne du script ci-dessus et décommenter la seconde.</p>
+<p>Ensuite, il faut activer le <code>mod_cgi</code>. Ceci se fait à l'interieur de la condition sur le module prefork activé précedemment.</p>
+<p>Les autres configurations ne sont pas à changer pour le moment, mais permettent d'executer des scripts CGI en dehors du dossier défini dans l'alias.</p>
+<p>Le fichier <code>python3</code> servant à générer la page est disponible dans le dossier <code>02-cgi/script</code>. Il doit être executable par l'utilisateur d'Apache httpd (<code>daemon</code> dans notre cas).</p>
+<pre><code class="language-python">#!/usr/bin/python3
+
+import cgitb
+import getpass
+cgitb.enable()
+
+print("Content-Type: text/html;charset=utf-8")
+print()
+
+print("&lt;!Doctype html&gt;")
+print("&lt;html&gt;")
+print("    &lt;head&gt;")
+print("        &lt;title&gt;CGI Apache httpd demo Python&lt;/title&gt;")
+print("    &lt;/head&gt;")
+print("    &lt;body&gt;")
+print("        &lt;h1&gt;CGI Apache httpd demo Python&lt;/h1&gt;")
+print("        &lt;p&gt;Welcome " + getpass.getuser() + "&lt;/p&gt;")
+print("    &lt;/body&gt;")
+print("&lt;/html&gt;")</code></pre>
+<p>Le script CGI Python va juste afficher une page html simple :</p>
+<pre><code>docker run --rm -v $(pwd)/02-cgi/demo1/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo1/script/script.py:/usr/local/apache2/cgi-bin/script.py -p 80:80 serveur-web-cgi</code></pre>
+<p>Rendez-vous donc sur l'url <a href="http://localhost/cgi-bin/script.py"><a href="http://localhost/cgi-bin/script.py">http://localhost/cgi-bin/script.py</a></a>.</p>
+<h3 id="afficher-une-page-html-avec-la-date-courante">Afficher une page HTML avec la date courante</h3>
+<p>Le dossier <code>02-cgi/demo2</code> contient les mêmes fichiers que <code>02-cgi/demo1</code>, à l'exception du fichier <code>script/script.py</code> qui est modifié de sorte à ajouter la date et l'heure courante (à la seconde prêt de sorte à voir le changement en rafraichissant la page).</p>
+<p>Voici quelques indications si vous désirez réaliser vous-même le test :</p>
+<pre><code># importer la gestion des dates
+import datetime
+
+# mettre la date et le temps courants dans une variable
+currentTime = datetime.datetime.now()
+
+# créer une string avec la date (utc) en langue naturelle
+currentTime.strftime("We are the %d, %b %Y %I:%M:%S %p")</code></pre>
+<h3 id="afficher-une-page-html-avec-formulaire">Afficher une page HTML avec formulaire</h3>
+<p>Pour réaliser cette tâche, vous aurez besoin de cette documentation : <a href="https://docs.python.org/3/library/cgi.html">Python 3: Common Gateway Interface support</a>.</p>
+<h2 id="demo--exercice--criture-dun-cgi-en-php">Demo / Exercice : écriture d'un CGI en php</h2>
+<h3 id="afficher-une-page-html-simple-1">Afficher une page HTML simple</h3>
+<p>De la même façon qu'en Python, il s'agit de créer un script en indiquant le type en début de fichier :</p>
+<pre><code class="language-php">#!/usr/bin/php-cgi
+
+&lt;?php header('Content-Type: text/html;charset=utf-8') ?&gt;
+&lt;!Doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;CGI Apache httpd demo PHP&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;CGI Apache httpd demo PHP&lt;/h1&gt;
+        &lt;p&gt;Welcome &lt;?= get_current_user() ?&gt;!&lt;/p&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<pre><code>docker run --rm -v $(pwd)/02-cgi/demo4/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo4/script/script.php:/usr/local/apache2/cgi-bin/script.php:ro -v $(pwd)/02-cgi/demo4/config/force-redirect.ini:/etc/php5/cgi/conf.d/30-force-redirect.ini:ro -p 80:80 serveur-web-cgi</code></pre>
+<h3 id="afficher-une-page-html-avec-la-date-courante-1">Afficher une page HTML avec la date courante</h3>
+<p>Utiliser l'exemple précédent ainsi que les <code>DateTimeImmutable</code> pour réaliser cet exemple.</p>
+<pre><code class="language-php">$currentTime = new DateTimeImmutable;</code></pre>
+<pre><code class="language-php">&lt;p&gt;We are the &lt;?= $currentTime-&gt;format("d, M Y h:i:s A") ?&gt;&lt;/p&gt;</code></pre>
+<pre><code>docker run --rm -v $(pwd)/02-cgi/demo5/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo5/script/script.php:/usr/local/apache2/cgi-bin/script.php:ro -v $(pwd)/02-cgi/demo5/config/force-redirect.ini:/etc/php5/cgi/conf.d/30-force-redirect.ini:ro -p 80:80 serveur-web-cgi</code></pre>
+<h3 id="afficher-une-page-html-avec-formulaire-1">Afficher une page HTML avec formulaire</h3>
+<p>Pour réaliser cette tâche, vous aurez besoin d'utiliser les variables superglobales <code>$_GET</code>, <code>$_POST</code> ou <code>$_REQUEST</code>.</p>
+<h2 id="demo--exercice--criture-dun-cgi-en-c">Demo / Exercice : écriture d'un CGI en C++</h2>
+<h3 id="afficher-une-page-html-simple-2">Afficher une page HTML simple</h3>
+<p>C++ est un langage compilé, il faut donc écrire le script, puis le compiler dans un executable que l'on donnera au CGI.</p>
+<p>Le code suivant est disponible dans le fichier <code>02-cgi/demo7/script/main.cpp</code> :</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;stdlib.h&gt;
+using namespace std;
+
+int main()
+{
+    cout&lt;&lt;"Content-type: text/html"&lt;&lt;endl;
+    cout&lt;&lt;endl;
+    cout&lt;&lt;"&lt;!Doctype&gt;"&lt;&lt;endl;
+    cout&lt;&lt;"&lt;html&gt;"&lt;&lt;endl;
+    cout&lt;&lt;"    &lt;head&gt;"&lt;&lt;endl;
+    cout&lt;&lt;"        &lt;title&gt;CGI Apache httpd demo C++&lt;/title&gt;"&lt;&lt;endl;
+    cout&lt;&lt;"    &lt;/head&gt;"&lt;&lt;endl;
+    cout&lt;&lt;"    &lt;body&gt;"&lt;&lt;endl;
+    cout&lt;&lt;"        &lt;h1&gt;CGI Apache httpd demo C++&lt;/h1&gt;"&lt;&lt;endl;
+    cout &lt;&lt; getenv("USER") &lt;&lt; endl;
+    cout&lt;&lt;"    &lt;/body&gt;"&lt;&lt;endl;
+    cout&lt;&lt;"&lt;/html&gt;"&lt;&lt;endl;
+
+    return 0;
+}</code></pre>
+<p>Pour le compiler, nous allons utiliser un container docker (<code>gcc</code>) et plus précisément le compilateur <code>g++</code> :</p>
+<pre><code>docker run --rm -v $(pwd)/02-cgi/demo7/script:/code -w /code gcc g++ main.cpp -o script.cgi</code></pre>
+<p>Maintenant que le fichier est compilé dans le binary <code>02-cgi/demo7/script/script.cgi</code>, il reste à le monter dans le container docker et tester :</p>
+<pre><code>docker run --rm -v $(pwd)/02-cgi/demo7/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo7/script/script.cgi:/usr/local/apache2/cgi-bin/script.cgi:ro -p 80:80 serveur-web-cgi</code></pre>
+<h3 id="afficher-une-page-html-avec-formulaire-et-nom">Afficher une page HTML avec formulaire et nom</h3>
+<p>Pour réaliser cette tâche, vous aurez besoin de cette documentation : <a href="https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm">C++ Web Programming</a></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Grâce à cette technique, il est possible de créer des scripts et logiciels permettant de rendre dynamique les pages web, et ce dans notre langage de préférence, et de préférence dans le langage le plus performant pour la tâche à réaliser.</p>
+<p>Dans le chapitre suivant, nous allons voir une autre technique un peu plus moderne et plus légère : l'<a href="03-fastcgi">utilisation de FastCGI</a>.</p>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container-fluid">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+        <!-- Livereload -->
+        <script>
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+                    ':35729/livereload.js?snipver=1"></' + 'script>')
+        </script>
+        <!-- End Livereload -->
+    </body>
+</html>

@@ -1,0 +1,7 @@
+version: "3.3"
+
+services:
+  http:
+    image: nginx:latest
+    ports:
+      - "80:80"

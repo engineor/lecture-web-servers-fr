@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Cours serveurs web</title>
+
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/highlight.dark.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="/">
+                Cours serveurs web
+                <small class="hidden-xs hidden-sm">
+                    Engineor
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container-fluid">
+            <div class="row">
+
+                
+                    <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="/">
+                                        Introduction
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/00-prerequisites">
+                                        Prérequis
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/01-101-server-web-theory">
+                                        Les bases
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/02-cgi">
+                                        CGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/03-fastcgi">
+                                        FastCGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/04-virtualhost">
+                                        Virtualhost
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/05-php-apache-httpd">
+                                        Apache httpd et PHP
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/06-php-multitenant">
+                                        PHP multi utilisateur
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/07-php-multiple-versions">
+                                        PHP plusieurs versions
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/08-php-scalability">
+                                        PHP évolutif
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/09-security">
+                                        Sécurité
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/10-databases">
+                                        Bases de données
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="/11-web-hosting">
+                                        Hébergement web
+                                    </a>
+                                </li>
+                                                    </ul>
+
+                    </nav>
+
+                
+                <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <h1 id="virtualhost">Virtualhost</h1>
+<p>Prérequis : </p>
+<ul>
+<li>docker installé et fonctionnel</li>
+<li>docker-compose installé et fonctionnel</li>
+<li>savoir éditer son fichier host</li>
+</ul>
+<p>Pratique :</p>
+<ul>
+<li>avoir <code>nginx:latest</code> (<code>docker pull nginx:latest</code>)</li>
+<li>avoir <code>php:7.2-fpm</code> (<code>docker pull php:7.2-fpm</code>)</li>
+</ul>
+<h2 id="dmarrer-un-nginx-sans-configuration-spcifique">Démarrer un nginx sans configuration spécifique</h2>
+<p><code>docker run --rm -p 80:80 nginx:latest</code></p>
+<h2 id="exposer-un-fichier">Exposer un fichier <code>index.html</code> :</h2>
+<h3 id="lire-la-config">Lire la config <em>(découverte du document root)</em></h3>
+<p><code>docker run --rm nginx:latest cat /etc/nginx/conf.d/default.conf</code></p>
+<h3 id="monter-le-document-root-en-volume">Monter le document root en volume</h3>
+<h4 id="fichier">Fichier <code>demo1/index.html</code></h4>
+<pre><code>&lt;!Doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Nginx demo&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Nginx demo&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3 id="charger-le-dossier">Charger le dossier <code>demo1</code> dans le container</h3>
+<p><code>docker run --rm -p 80:80 -v $(pwd)/demo1:/usr/share/nginx/html nginx:latest</code></p>
+<h2 id="changer-le-document-root">Changer le document root</h2>
+<h3 id="monter-le-document-root-en-volume-1">Monter le document root en volume</h3>
+<h4 id="fichier-1">Fichier <code>demo2/nginx/default.conf</code></h4>
+<pre><code>server {
+    listen       80;
+    server_name  localhost;
+
+    location / {
+        root   /root;
+    }
+}</code></pre>
+<h4 id="fichier-2">Fichier <code>demo2/public/index.html</code></h4>
+<pre><code>&lt;!Doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Nginx demo 2&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Nginx demo 2&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3 id="charger-le-dossier-1">Charger le dossier <code>demo2</code> (<code>nginx</code> et <code>public</code>) dans le container</h3>
+<p><code>docker run --rm -p 80:80 -v $(pwd)/demo2/nginx:/etc/nginx/conf.d/ -v $(pwd)/demo2/public/:/root nginx:latest</code></p>
+<h2 id="virtualhost-bas-sur-le-nom">Virtualhost basé sur le nom</h2>
+<h2 id="virtualhost-bas-sur-ladresse">Virtualhost basé sur l'adresse</h2>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container-fluid">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+        <!-- Livereload -->
+        <script>
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+                    ':35729/livereload.js?snipver=1"></' + 'script>')
+        </script>
+        <!-- End Livereload -->
+    </body>
+</html>
