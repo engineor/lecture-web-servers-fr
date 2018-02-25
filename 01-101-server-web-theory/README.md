@@ -330,5 +330,5 @@ Dans ce chapitre, nous avons vu les bases des serveurs web, comment charger une 
 
 Si vous utilisez une solution pre-packagé (WAMP, MAMP, etc.), je vous invite à aller consulter les fichiers de configuration pour mieux comprendre comment ces ensembles applicatifs fonctionnent.
 
-Le chapitre suivant couvrira une technique permettant de servir une page dynamique depuis un serveur http : l'[utilisation des CGI](02-cgi).
+Le chapitre suivant couvrira une technique permettant de servir des pages différentes selon l'origine de la requête à l'aide des [virtualhost](02-virtualhost).
 

@@ -8,11 +8,11 @@ D'après [Wikipedia](https://fr.wikipedia.org/wiki/Common_Gateway_Interface) :
 
 >La Common Gateway Interface (littéralement « Interface de passerelle commune »), généralement abrégée CGI, est une interface utilisée par les serveurs HTTP. Elle a été normalisée par la RFC 38751.
 
-![](02-cgi/images/cgi-wikipedia.png)
+![](04-cgi/images/cgi-wikipedia.png)
 
 La CGI permets donc au serveur http de lancer l'exécution d'un logiciel sur la machine et d'en récupérer le résultat.
 
-![](02-cgi/images/cgi-sequence.png)
+![](04-cgi/images/cgi-sequence.png)
 
 ### Limitations
 
@@ -47,10 +47,10 @@ FROM httpd:latest
 RUN apt-get update && apt-get install -y python3 php5-cgi
 ```
 
-Ce fichier est disponible dans le dossier `02-cgi/config`, et nous appellerons l'image `serveur-web-cgi`.
+Ce fichier est disponible dans le dossier `04-cgi/config`, et nous appellerons l'image `serveur-web-cgi`.
 
 ```
-docker build -t serveur-web-cgi 02-cgi/config
+docker build -t serveur-web-cgi 04-cgi/config
 ```
 
 Nous pouvons maintenant utiliser l'image `serveur-web-cgi` qui contient les executables pour PHP et python :
@@ -87,7 +87,7 @@ La configuration que nous allons charger devra donc contenir cette version modif
 
 ### Afficher une page HTML simple
 
-Le fichier de configuration modifié est disponible dans le dossier `02-cgi/config`, avec `mod_cgi` activé.
+Le fichier de configuration modifié est disponible dans le dossier `04-cgi/config`, avec `mod_cgi` activé.
 
 Les configurations à changer sont les suivantes :
 
@@ -139,7 +139,7 @@ Ensuite, il faut activer le `mod_cgi`. Ceci se fait à l'interieur de la conditi
 
 Les autres configurations ne sont pas à changer pour le moment, mais permettent d'executer des scripts CGI en dehors du dossier défini dans l'alias.
 
-Le fichier `python3` servant à générer la page est disponible dans le dossier `02-cgi/script`. Il doit être executable par l'utilisateur d'Apache httpd (`daemon` dans notre cas).
+Le fichier `python3` servant à générer la page est disponible dans le dossier `04-cgi/script`. Il doit être executable par l'utilisateur d'Apache httpd (`daemon` dans notre cas).
 
 ```python
 #!/usr/bin/python3
@@ -166,14 +166,14 @@ print("</html>")
 Le script CGI Python va juste afficher une page html simple :
 
 ```
-docker run --rm -v $(pwd)/02-cgi/demo1/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo1/script/script.py:/usr/local/apache2/cgi-bin/script.py -p 80:80 serveur-web-cgi
+docker run --rm -v $(pwd)/04-cgi/demo1/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/04-cgi/demo1/script/script.py:/usr/local/apache2/cgi-bin/script.py -p 80:80 serveur-web-cgi
 ```
 
 Rendez-vous donc sur l'url [http://localhost/cgi-bin/script.py](http://localhost/cgi-bin/script.py).
 
 ### Afficher une page HTML avec la date courante
 
-Le dossier `02-cgi/demo2` contient les mêmes fichiers que `02-cgi/demo1`, à l'exception du fichier `script/script.py` qui est modifié de sorte à ajouter la date et l'heure courante (à la seconde prêt de sorte à voir le changement en rafraichissant la page).
+Le dossier `04-cgi/demo2` contient les mêmes fichiers que `04-cgi/demo1`, à l'exception du fichier `script/script.py` qui est modifié de sorte à ajouter la date et l'heure courante (à la seconde prêt de sorte à voir le changement en rafraichissant la page).
 
 Voici quelques indications si vous désirez réaliser vous-même le test :
 
@@ -216,7 +216,7 @@ De la même façon qu'en Python, il s'agit de créer un script en indiquant le t
 ```
 
 ```
-docker run --rm -v $(pwd)/02-cgi/demo4/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo4/script/script.php:/usr/local/apache2/cgi-bin/script.php:ro -v $(pwd)/02-cgi/demo4/config/force-redirect.ini:/etc/php5/cgi/conf.d/30-force-redirect.ini:ro -p 80:80 serveur-web-cgi
+docker run --rm -v $(pwd)/04-cgi/demo4/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/04-cgi/demo4/script/script.php:/usr/local/apache2/cgi-bin/script.php:ro -v $(pwd)/04-cgi/demo4/config/force-redirect.ini:/etc/php5/cgi/conf.d/30-force-redirect.ini:ro -p 80:80 serveur-web-cgi
 ```
 
 ### Afficher une page HTML avec la date courante
@@ -232,7 +232,7 @@ $currentTime = new DateTimeImmutable;
 ```
 
 ```
-docker run --rm -v $(pwd)/02-cgi/demo5/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo5/script/script.php:/usr/local/apache2/cgi-bin/script.php:ro -v $(pwd)/02-cgi/demo5/config/force-redirect.ini:/etc/php5/cgi/conf.d/30-force-redirect.ini:ro -p 80:80 serveur-web-cgi
+docker run --rm -v $(pwd)/04-cgi/demo5/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/04-cgi/demo5/script/script.php:/usr/local/apache2/cgi-bin/script.php:ro -v $(pwd)/04-cgi/demo5/config/force-redirect.ini:/etc/php5/cgi/conf.d/30-force-redirect.ini:ro -p 80:80 serveur-web-cgi
 ```
 
 ### Afficher une page HTML avec formulaire
@@ -245,7 +245,7 @@ Pour réaliser cette tâche, vous aurez besoin d'utiliser les variables superglo
 
 C++ est un langage compilé, il faut donc écrire le script, puis le compiler dans un executable que l'on donnera au CGI.
 
-Le code suivant est disponible dans le fichier `02-cgi/demo7/script/main.cpp` :
+Le code suivant est disponible dans le fichier `04-cgi/demo7/script/main.cpp` :
 
 ```cpp
 #include <iostream>
@@ -274,13 +274,13 @@ int main()
 Pour le compiler, nous allons utiliser un container docker (`gcc`) et plus précisément le compilateur `g++` :
 
 ```
-docker run --rm -v $(pwd)/02-cgi/demo7/script:/code -w /code gcc g++ main.cpp -o script.cgi
+docker run --rm -v $(pwd)/04-cgi/demo7/script:/code -w /code gcc g++ main.cpp -o script.cgi
 ```
 
-Maintenant que le fichier est compilé dans le binary `02-cgi/demo7/script/script.cgi`, il reste à le monter dans le container docker et tester :
+Maintenant que le fichier est compilé dans le binary `04-cgi/demo7/script/script.cgi`, il reste à le monter dans le container docker et tester :
 
 ```
-docker run --rm -v $(pwd)/02-cgi/demo7/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-cgi/demo7/script/script.cgi:/usr/local/apache2/cgi-bin/script.cgi:ro -p 80:80 serveur-web-cgi
+docker run --rm -v $(pwd)/04-cgi/demo7/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/04-cgi/demo7/script/script.cgi:/usr/local/apache2/cgi-bin/script.cgi:ro -p 80:80 serveur-web-cgi
 ```
 
 ### Afficher une page HTML avec formulaire et nom
@@ -291,4 +291,4 @@ Pour réaliser cette tâche, vous aurez besoin de cette documentation : [C++ Web
 
 Grâce à cette technique, il est possible de créer des scripts et logiciels permettant de rendre dynamique les pages web, et ce dans notre langage de préférence, et de préférence dans le langage le plus performant pour la tâche à réaliser.
 
-Dans le chapitre suivant, nous allons voir une autre technique un peu plus moderne et plus légère : l'[utilisation de FastCGI](03-fastcgi).
+Dans le chapitre suivant, nous allons voir une autre technique un peu plus moderne et plus légère : l'[utilisation de FastCGI](05-fastcgi).

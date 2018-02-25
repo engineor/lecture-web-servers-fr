@@ -21,7 +21,7 @@ Pour le reste, le diagramme de séquence ne prennant pas en compte la séparatio
 
 Pour ce chapitre, nous prendrons l'exemple de `php-fpm` (`PHP FastCGI Process Manager`), qui est l'implémentation FastCGI la plus répandue actuellement dans l'écosystème PHP.
 
-![](03-fastcgi/images/php-fpm.png)
+![](05-fastcgi/images/php-fpm.png)
 
 Pour exécuter du Python3 en FastCGI, il est possible d'utiliser des serveurs comme [uWSGI](https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-uwsgi-web-server-with-nginx) ou [CherryPy](https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-a-cherrypy-web-server-behind-nginx).
 

@@ -1,5 +1,7 @@
 # Cours : Serveurs web
 
+[![Build Status](https://travis-ci.org/engineor/lecture-web-servers-fr.svg?branch=master)](https://travis-ci.org/engineor/lecture-web-servers-fr)
+
 Ce cours en français est conçu à destination d'élèves de 5ème année à l'[IPSSI](https://www.ecole-ipssi.com/). Il a cependant vocation à évoluer, comme indiqué à la fin de cette documentation (rubrique `Contribuer`).
 
 Le contenu et les exemples sont principalement basés sur PHP et son écosystème, bien que les concepts soient les mêmes avec tous les langages et systèmes d'exploitation.
@@ -8,10 +10,10 @@ Le contenu et les exemples sont principalement basés sur PHP et son écosystèm
 
 0. [Prérequis](00-prerequisites)
 1. [Web, requête http et serveurs web, les bases](01-101-server-web-theory)
-2. [Mettre du contenu dynamique dans une page web avec CGI](02-cgi)
-3. [Mettre du contenu dynamique dans une page web avec FastCGI](03-fastcgi)
-4. [Virtualhost : mettre plusieurs sites sur un même serveur](04-virtualhost)
-5. [Executer PHP avec Apache httpd, les stratégies disponibles](05-php-apache-httpd)
+2. [Virtualhost : mettre plusieurs sites sur un même serveur](02-virtualhost)
+3. [Executer PHP avec Apache httpd, les stratégies disponibles](03-php-apache-httpd)
+4. [Mettre du contenu dynamique dans une page web avec CGI](04-cgi)
+5. [Mettre du contenu dynamique dans une page web avec FastCGI](05-fastcgi)
 6. [Executer PHP avec différents utilisateurs](06-php-multitenant)
 7. [Executer différentes versions de PHP dans le cadre d'une requête web](07-php-multiple-versions)
 8. [Rendre l'execution de PHP évolutive (scalable)](08-php-scalability)

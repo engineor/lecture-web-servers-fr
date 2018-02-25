@@ -19,18 +19,18 @@ menu:
     bases:
       text: Les bases
       relativeUrl: 01-101-server-web-theory
-    cgi:
-      text: CGI
-      relativeUrl: 02-cgi
-    fastcgi:
-      text: FastCGI
-      relativeUrl: 03-fastcgi
     virtualhost:
       text: Virtualhost
-      relativeUrl: 04-virtualhost
+      relativeUrl: 02-virtualhost
     apache-httpd:
       text: Apache httpd et PHP
-      relativeUrl: 05-php-apache-httpd
+      relativeUrl: 03-php-apache-httpd
+    cgi:
+      text: CGI
+      relativeUrl: 04-cgi
+    fastcgi:
+      text: FastCGI
+      relativeUrl: 05-fastcgi
     multitenant:
       text: PHP multi utilisateur
       relativeUrl: 06-php-multitenant
