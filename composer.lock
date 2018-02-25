@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9abad2faaff06b5a53f15e0dc20d8fa5",
+    "content-hash": "b06319685bcf67dad474b0905623dec3",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -95,16 +95,16 @@
         },
         {
             "name": "couscous/couscous",
-            "version": "1.6.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CouscousPHP/Couscous.git",
-                "reference": "7e272e075fe282c9d729db472464fab1bb06c2c6"
+                "reference": "07fd34e993c3c24ce04e2572827d429fdc15bdec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CouscousPHP/Couscous/zipball/7e272e075fe282c9d729db472464fab1bb06c2c6",
-                "reference": "7e272e075fe282c9d729db472464fab1bb06c2c6",
+                "url": "https://api.github.com/repos/CouscousPHP/Couscous/zipball/07fd34e993c3c24ce04e2572827d429fdc15bdec",
+                "reference": "07fd34e993c3c24ce04e2572827d429fdc15bdec",
                 "shasum": ""
             },
             "require": {
@@ -139,7 +139,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2017-03-19T16:35:45+00:00"
+            "time": "2018-01-14T17:28:05+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -1295,7 +1295,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "couscous/couscous": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

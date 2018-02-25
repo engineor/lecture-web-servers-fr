@@ -1,5 +1,5 @@
 {
     "require": {
-        "couscous/couscous": "^1.6"
+        "couscous/couscous": "dev-master"
     }
 }
