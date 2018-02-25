@@ -104,11 +104,64 @@
                 
                 <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
                     <h1 id="executer-php-avec-apache-httpd-les-stratgies-disponibles">Executer PHP avec Apache httpd, les stratégies disponibles</h1>
+<p>Il existe au moins trois façons de rendre un site dynamique en utilisant PHP comme langage de programmation pour générer les pages :</p>
 <ul>
-<li>mod_php</li>
-<li>php-cgi</li>
-<li>php-fpm</li>
+<li>Apache httpd <code>mod_php</code> : une extension d'Apache httpd permettant de faire tourner un processus PHP dans le processus Apache httpd.</li>
+<li><code>php-cgi</code> : faire démarrer un processus PHP à la demande pour l'interpretation de la ressource.</li>
+<li><code>php-fpm</code> : avoir un serveur avec plusieurs threads capable de prendre en charge les requêtes envoyéees par le serrrveur http.</li>
 </ul>
+<p>Dans cet chapitre, nous allons nous concentrer exclusivement sur la première solution, historiquement la plus utilisée car simple à mettre en oeuvre. Les autres solutions seront détaillées dans les chapitres suivants.</p>
+<h2 id="fonctionnement">Fonctionnement</h2>
+<p>Comme indiqué sur le <a href="https://wiki.apache.org/httpd/php">wiki d'Apache</a>, le <code>mod_php</code> pouvait s'executer en <a href="https://httpd.apache.org/docs/2.4/fr/dso.html"><code>DSO</code></a> jusqu'à Apache httpd 2.2, c'est à dire comme morceau de logiciel invocable par le programme principale.</p>
+<p>Cette solution nécessite l'execution de PHP avec le prefork MPM, qui est une solution lourde d'execution sans thread d'Apache. Par ailleurs, PHP est chargé pour toutes les requêtes web et non séléctivement.</p>
+<p>C'est cette solution qui a déclenché la rumeur qu'Apache httpd serait capable de recevoir moins de requêtes par seconde que d'autres serveurs comme Nginx, ce qui est vrai dans le contexte de cette configuration mais totalement faux le reste du temps.</p>
+<p>À partir de la version 2.4 d'Apache httpd, il est possible d'utiliser PHP avec le <code>mpm event</code>, ce qui améliore les performances.</p>
+<p>PHP reste dans ce scenario couplé à la machine executant le serveur http, il n'y a donc pas de possibilité d'évolutivité horizontale.</p>
+<p>Concernant l'utilisateur responsable de l'execution, c'est dans tous les cas l'utilisateur d'Apache httpd, sauf dans deux cas précis :</p>
+<ul>
+<li>l'utilisation du <a href="http://mpm-itk.sesse.net/">MPM ITK</a>, un fork du MPM prefork qui permets de définir dans le virtualhost un utilisateur spécifique qui lancera le process forké executant la requête.</li>
+<li>l'utilisation de librairies comme <a href="https://www.suphp.org/Home.html">SuPHP</a></li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<p>Il existe des images Docker contenant PHP installé sur Apache httpd avec <code>mod_php</code> : <a href="https://hub.docker.com/_/php/">PHP sur Docker hub</a>, versions <code>-apache</code>.</p>
+<p>Tester l'execution d'un fichier simple (<code>index.php</code> contenant <code>&lt;?php phpinfo(); ?&gt;</code>) :</p>
+<pre><code>docker run --rm -p 80:80 -v $(pwd)/03-php-apache-httpd/demo1/html:/var/www/html php:7.2-apache</code></pre>
+<p>Regardons la configuration :</p>
+<pre><code>docker run --rm php:7.2-apache cat /etc/apache2/apache2.conf</code></pre>
+<blockquote>
+<p>IncludeOptional mods-enabled/*.load<br />
+IncludeOptional mods-enabled/*.conf  </p>
+<p>IncludeOptional conf-enabled/*.conf  </p>
+<p>IncludeOptional sites-enabled/*.conf  </p>
+</blockquote>
+<pre><code>docker run --rm php:7.2-apache cat /etc/apache2/mods-enabled</code></pre>
+<blockquote>
+<p>lrwxrwxrwx 1 root root 27 Feb 16 23:16 php7.load -&gt; ../mods-available/php7.load</p>
+</blockquote>
+<pre><code>docker run --rm php:7.2-apache cat /etc/apache2/conf-enabled/docker-php.conf</code></pre>
+<pre><code class="language-apache">&lt;FilesMatch \.php$&gt;
+    SetHandler application/x-httpd-php
+&lt;/FilesMatch&gt;
+
+DirectoryIndex disabled
+DirectoryIndex index.php index.html
+
+&lt;Directory /var/www/&gt;
+    Options -Indexes
+    AllowOverride All
+&lt;/Directory&gt;</code></pre>
+<p><code>DirectoryIndex</code> indique à Apache d'utiliser le fichier <code>index.php</code> si un dossier est demandé dans le requête, et <code>index.html</code> si <code>index.php</code> n'existe pas.</p>
+<p><code>SetHandler</code> indique à Apache de faire une execution de PHP sur le fichier, si le fichier fini par <code>.php</code> (<code>FilesMatch \.php$</code>).</p>
+<p><code>AllowOverride All</code> indique qu'un fichier <code>.htaccess</code> peut surcharger les configurations du virtualhost.</p>
+<p>En plus de ces configuration, la bibliothèque PHP est installée sur le système :</p>
+<pre><code>docker run --rm php:7.2-apache cat /etc/apache2/mods-available/php7.load</code></pre>
+<blockquote>
+<p>LoadModule php7_module        /usr/lib/apache2/modules/libphp7.so</p>
+</blockquote>
+<h2 id="conclusion">Conclusion</h2>
+<p>Bien que n'étant pas particulièrement efficace, cette solution permets de mettre en place un serveur http / php rapidement et avec une infrastructure minimale.</p>
+<p>Un certain nombre de restrictions concernant la gestion granulaire des utilisateurs et l'évolutivité n'en font pas la solution la plus adéquate pour tous les types de projets.</p>
+<p>D'autres solutions existent tels que l'utilisation des <a href="04-cgi">scripts CGI</a> détaillée dans le chapitre suivant.</p>
                 </section>
 
             </div>

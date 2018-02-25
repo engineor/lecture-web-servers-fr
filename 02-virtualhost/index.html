@@ -114,7 +114,7 @@
 127.0.0.1    demo-vhost</code></pre>
 <h3 id="apache-httpd">Apache httpd</h3>
 <p>Comme dans <a href="01-101-server-web-theory">le chapitre précédent</a>, il s'agit de démarrer Apache httpd avec une configuration personnalisée. En regardant dans le fichier <code>hhtpd.conf</code>, on retrouve les lignes suivantes :</p>
-<pre><code>docker run httpd cat /usr/local/apache2/conf/httpd.conf | grep vhost</code></pre>
+<pre><code>docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf | grep vhost</code></pre>
 <blockquote>
 <p>#LoadModule vhost_alias_module modules/mod_vhost_alias.so
 #Include conf/extra/httpd-vhosts.conf</p>
@@ -125,7 +125,7 @@
 </blockquote>
 <p>À noter, il est possible d'utiliser un joker (<em>wildcard</em>), ici * pour charger plusieurs fichiers de configuration d'hôtes virtuels, par exemple <code>Include vhosts/*.conf</code>.</p>
 <p>Pour cette démonstration, nous avons copié le fichier de configuration (<code>conf/extra/httpd-vhosts.conf</code>) dans le dossier <code>02-virtualhost/demo1/config</code> avec la commande suivante :</p>
-<pre><code>docker run httpd cat /usr/local/apache2/conf/extra/httpd-vhosts.conf &gt; 02-virtualhost/demo1/config/httpd-vhosts.conf</code></pre>
+<pre><code>docker run --rm httpd cat /usr/local/apache2/conf/extra/httpd-vhosts.conf &gt; 02-virtualhost/demo1/config/httpd-vhosts.conf</code></pre>
 <p>Ces configurations par défaut sont basés sur les noms. On retrouve donc une directive <code>ServerName</code> dans chaque <code>VirtualHost</code>, ainsi que l'accès au <code>VirtualHost</code> pour n'importe quelle adresse IP (<code>*:80</code>).</p>
 <pre><code class="language-apache">&lt;VirtualHost *:80&gt;
     ServerAdmin webmaster@dummy-host.example.com
