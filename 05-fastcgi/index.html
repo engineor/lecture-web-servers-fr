@@ -48,23 +48,23 @@
                                     </a>
                                 </li>
                                                             <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/02-cgi">
-                                        CGI
-                                    </a>
-                                </li>
-                                                            <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/03-fastcgi">
-                                        FastCGI
-                                    </a>
-                                </li>
-                                                            <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/04-virtualhost">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/02-virtualhost">
                                         Virtualhost
                                     </a>
                                 </li>
                                                             <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/05-php-apache-httpd">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/03-php-apache-httpd">
                                         Apache httpd et PHP
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/04-cgi">
+                                        CGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/05-fastcgi">
+                                        FastCGI
                                     </a>
                                 </li>
                                                             <li class="">
@@ -103,61 +103,36 @@
 
                 
                 <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
-                    <h1 id="virtualhost">Virtualhost</h1>
-<p>Prérequis : </p>
-<ul>
-<li>docker installé et fonctionnel</li>
-<li>docker-compose installé et fonctionnel</li>
-<li>savoir éditer son fichier host</li>
-</ul>
-<p>Pratique :</p>
-<ul>
-<li>avoir <code>nginx:latest</code> (<code>docker pull nginx:latest</code>)</li>
-<li>avoir <code>php:7.2-fpm</code> (<code>docker pull php:7.2-fpm</code>)</li>
-</ul>
-<h2 id="dmarrer-un-nginx-sans-configuration-spcifique">Démarrer un nginx sans configuration spécifique</h2>
-<p><code>docker run --rm -p 80:80 nginx:latest</code></p>
-<h2 id="exposer-un-fichier">Exposer un fichier <code>index.html</code> :</h2>
-<h3 id="lire-la-config">Lire la config <em>(découverte du document root)</em></h3>
-<p><code>docker run --rm nginx:latest cat /etc/nginx/conf.d/default.conf</code></p>
-<h3 id="monter-le-document-root-en-volume">Monter le document root en volume</h3>
-<h4 id="fichier">Fichier <code>demo1/index.html</code></h4>
-<pre><code>&lt;!Doctype html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;Nginx demo&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        &lt;h1&gt;Nginx demo&lt;/h1&gt;
-    &lt;/body&gt;
-&lt;/html&gt;</code></pre>
-<h3 id="charger-le-dossier">Charger le dossier <code>demo1</code> dans le container</h3>
-<p><code>docker run --rm -p 80:80 -v $(pwd)/demo1:/usr/share/nginx/html nginx:latest</code></p>
-<h2 id="changer-le-document-root">Changer le document root</h2>
-<h3 id="monter-le-document-root-en-volume-1">Monter le document root en volume</h3>
-<h4 id="fichier-1">Fichier <code>demo2/nginx/default.conf</code></h4>
-<pre><code>server {
-    listen       80;
-    server_name  localhost;
-
-    location / {
-        root   /root;
-    }
-}</code></pre>
-<h4 id="fichier-2">Fichier <code>demo2/public/index.html</code></h4>
-<pre><code>&lt;!Doctype html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;Nginx demo 2&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        &lt;h1&gt;Nginx demo 2&lt;/h1&gt;
-    &lt;/body&gt;
-&lt;/html&gt;</code></pre>
-<h3 id="charger-le-dossier-1">Charger le dossier <code>demo2</code> (<code>nginx</code> et <code>public</code>) dans le container</h3>
-<p><code>docker run --rm -p 80:80 -v $(pwd)/demo2/nginx:/etc/nginx/conf.d/ -v $(pwd)/demo2/public/:/root nginx:latest</code></p>
-<h2 id="virtualhost-bas-sur-le-nom">Virtualhost basé sur le nom</h2>
-<h2 id="virtualhost-bas-sur-ladresse">Virtualhost basé sur l'adresse</h2>
+                    <h1 id="un-site-dynamique-avec-fastcgi">Un site dynamique avec FastCGI</h1>
+<h2 id="quest-ce-que-fastcgi---fast-common-gateway-interface">Qu'est-ce que FastCGI - Fast Common Gateway Interface</h2>
+<h3 id="dfinition">Définition</h3>
+<p>D'après <a href="https://fr.wikipedia.org/wiki/FastCGI">Wikipedia</a> :</p>
+<blockquote>
+<p>FastCGI est une technique permettant la communication entre un serveur HTTP et un logiciel indépendant, c'est une évolution de Common Gateway Interface, abrégée en CGI, signifiant en anglais « Interface passerelle commune ».</p>
+<p>Créée en 1996 pour gérer les applications dynamiques des applications du World Wide Web (souvent abrégé en Web), la Common Gateway Interface permet l’exécution d'un nouveau processus à chaque requête, permettant ainsi la génération dynamique des pages.</p>
+<p>Dans le cas de CGI, chaque requête lance une nouvelle instance de CGI, qui appellera le programme à exécuter. Le binaire cgi recrée à chaque appel le contexte de l'environnement d'exécution et ne permet pas de limiter le nombre de processus simultanés. Le nombre de processus simultanés sera donc dépendant du nombre de processus simultanés du serveur web.</p>
+<p>Avec FastCGI, les applications générant les pages dynamiques peuvent se situer sur un ou des serveur(s) différent(s) du ou des serveur(s) hébergeant le service HTTP. Une variable est introduite permettant de déterminer le nombre minimum et maximum de processus CGI à exécuter, indépendamment du nombre de processus HTTP maximum.</p>
+</blockquote>
+<p>Concrêtement, FastCGI donne donc la possibilité d'executer la génération des pages sur des serveurs physique ou virtuels différent du serveur hébergeant le serveur http, et est configurable indépendamment du serveur http.</p>
+<p>Pour le reste, le diagramme de séquence ne prennant pas en compte la séparation des processus ni la séparation réseau de l'exécution des programmes, on retrouve un schema similaire.</p>
+<p>Pour ce chapitre, nous prendrons l'exemple de <code>php-fpm</code> (<code>PHP FastCGI Process Manager</code>), qui est l'implémentation FastCGI la plus répandue actuellement dans l'écosystème PHP.</p>
+<p><img src="05-fastcgi/images/php-fpm.png" alt="" /></p>
+<p>Pour exécuter du Python3 en FastCGI, il est possible d'utiliser des serveurs comme <a href="https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-uwsgi-web-server-with-nginx">uWSGI</a> ou <a href="https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-a-cherrypy-web-server-behind-nginx">CherryPy</a>.</p>
+<h3 id="volutivit">Évolutivité</h3>
+<p>Un chapitre complet sera dédié à l'évolutivité horizontale de l'infrastructure grâce à PHP-FPM plus tard dans le cours.</p>
+<h2 id="demo--exercice--php-fpm-en-local">Demo / Exercice : PHP-FPM en local</h2>
+<h3 id="avec-apache-httpd">Avec Apache httpd</h3>
+<h3 id="avec-nginx">Avec Nginx</h3>
+<h2 id="demo--exercice--php-fpm-distant">Demo / Exercice : PHP-FPM distant</h2>
+<h3 id="avec-apache-httpd-1">Avec Apache httpd</h3>
+<h3 id="avec-nginx-1">Avec Nginx</h3>
+<h2 id="profiter-des-avantages-dun-serveur-fastcgi-en-php">Profiter des avantages d'un serveur FastCGI en PHP</h2>
+<p><a href="https://secure.php.net/manual/fr/function.fastcgi-finish-request.php"><code>fastcgi_finish_request</code></a></p>
+<blockquote>
+<p>Cette fonction affiche toutes les données de la réponse au client et termine la requête. Ceci permet pour les tâches consommatrices en temps d'être effectuées sans laisser la connexion avec le client ouverte.</p>
+</blockquote>
+<h2 id="conclusion">Conclusion</h2>
+<p>FastCGI est une évolution pratique de CGI qui nous permet une meilleure évolutivité et une gestion des processus plus granulaire.</p>
                 </section>
 
             </div>

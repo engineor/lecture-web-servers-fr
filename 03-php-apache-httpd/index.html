@@ -48,23 +48,23 @@
                                     </a>
                                 </li>
                                                             <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/02-cgi">
-                                        CGI
-                                    </a>
-                                </li>
-                                                            <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/03-fastcgi">
-                                        FastCGI
-                                    </a>
-                                </li>
-                                                            <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/04-virtualhost">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/02-virtualhost">
                                         Virtualhost
                                     </a>
                                 </li>
                                                             <li class="">
-                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/05-php-apache-httpd">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/03-php-apache-httpd">
                                         Apache httpd et PHP
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/04-cgi">
+                                        CGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/05-fastcgi">
+                                        FastCGI
                                     </a>
                                 </li>
                                                             <li class="">
@@ -103,36 +103,12 @@
 
                 
                 <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
-                    <h1 id="un-site-dynamique-avec-fastcgi">Un site dynamique avec FastCGI</h1>
-<h2 id="quest-ce-que-fastcgi---fast-common-gateway-interface">Qu'est-ce que FastCGI - Fast Common Gateway Interface</h2>
-<h3 id="dfinition">Définition</h3>
-<p>D'après <a href="https://fr.wikipedia.org/wiki/FastCGI">Wikipedia</a> :</p>
-<blockquote>
-<p>FastCGI est une technique permettant la communication entre un serveur HTTP et un logiciel indépendant, c'est une évolution de Common Gateway Interface, abrégée en CGI, signifiant en anglais « Interface passerelle commune ».</p>
-<p>Créée en 1996 pour gérer les applications dynamiques des applications du World Wide Web (souvent abrégé en Web), la Common Gateway Interface permet l’exécution d'un nouveau processus à chaque requête, permettant ainsi la génération dynamique des pages.</p>
-<p>Dans le cas de CGI, chaque requête lance une nouvelle instance de CGI, qui appellera le programme à exécuter. Le binaire cgi recrée à chaque appel le contexte de l'environnement d'exécution et ne permet pas de limiter le nombre de processus simultanés. Le nombre de processus simultanés sera donc dépendant du nombre de processus simultanés du serveur web.</p>
-<p>Avec FastCGI, les applications générant les pages dynamiques peuvent se situer sur un ou des serveur(s) différent(s) du ou des serveur(s) hébergeant le service HTTP. Une variable est introduite permettant de déterminer le nombre minimum et maximum de processus CGI à exécuter, indépendamment du nombre de processus HTTP maximum.</p>
-</blockquote>
-<p>Concrêtement, FastCGI donne donc la possibilité d'executer la génération des pages sur des serveurs physique ou virtuels différent du serveur hébergeant le serveur http, et est configurable indépendamment du serveur http.</p>
-<p>Pour le reste, le diagramme de séquence ne prennant pas en compte la séparation des processus ni la séparation réseau de l'exécution des programmes, on retrouve un schema similaire.</p>
-<p>Pour ce chapitre, nous prendrons l'exemple de <code>php-fpm</code> (<code>PHP FastCGI Process Manager</code>), qui est l'implémentation FastCGI la plus répandue actuellement dans l'écosystème PHP.</p>
-<p><img src="03-fastcgi/images/php-fpm.png" alt="" /></p>
-<p>Pour exécuter du Python3 en FastCGI, il est possible d'utiliser des serveurs comme <a href="https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-uwsgi-web-server-with-nginx">uWSGI</a> ou <a href="https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-a-cherrypy-web-server-behind-nginx">CherryPy</a>.</p>
-<h3 id="volutivit">Évolutivité</h3>
-<p>Un chapitre complet sera dédié à l'évolutivité horizontale de l'infrastructure grâce à PHP-FPM plus tard dans le cours.</p>
-<h2 id="demo--exercice--php-fpm-en-local">Demo / Exercice : PHP-FPM en local</h2>
-<h3 id="avec-apache-httpd">Avec Apache httpd</h3>
-<h3 id="avec-nginx">Avec Nginx</h3>
-<h2 id="demo--exercice--php-fpm-distant">Demo / Exercice : PHP-FPM distant</h2>
-<h3 id="avec-apache-httpd-1">Avec Apache httpd</h3>
-<h3 id="avec-nginx-1">Avec Nginx</h3>
-<h2 id="profiter-des-avantages-dun-serveur-fastcgi-en-php">Profiter des avantages d'un serveur FastCGI en PHP</h2>
-<p><a href="https://secure.php.net/manual/fr/function.fastcgi-finish-request.php"><code>fastcgi_finish_request</code></a></p>
-<blockquote>
-<p>Cette fonction affiche toutes les données de la réponse au client et termine la requête. Ceci permet pour les tâches consommatrices en temps d'être effectuées sans laisser la connexion avec le client ouverte.</p>
-</blockquote>
-<h2 id="conclusion">Conclusion</h2>
-<p>FastCGI est une évolution pratique de CGI qui nous permet une meilleure évolutivité et une gestion des processus plus granulaire.</p>
+                    <h1 id="executer-php-avec-apache-httpd-les-stratgies-disponibles">Executer PHP avec Apache httpd, les stratégies disponibles</h1>
+<ul>
+<li>mod_php</li>
+<li>php-cgi</li>
+<li>php-fpm</li>
+</ul>
                 </section>
 
             </div>

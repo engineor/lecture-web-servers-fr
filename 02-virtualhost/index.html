@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Cours serveurs web</title>
+
+        <link rel="stylesheet" href="https://lab.engineor.com/lecture-web-servers-fr/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://lab.engineor.com/lecture-web-servers-fr/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://lab.engineor.com/lecture-web-servers-fr/css/highlight.dark.css">
+        <link rel="stylesheet" href="https://lab.engineor.com/lecture-web-servers-fr/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top">
+
+            <a class="navbar-brand" href="https://lab.engineor.com/lecture-web-servers-fr/">
+                Cours serveurs web
+                <small class="hidden-xs hidden-sm">
+                    Engineor
+                </small>
+            </a>
+
+            
+        </header>
+
+        <main class="container-fluid">
+            <div class="row">
+
+                
+                    <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                        <ul class="nav nav-pills nav-stacked">
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/">
+                                        Introduction
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/00-prerequisites">
+                                        Prérequis
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/01-101-server-web-theory">
+                                        Les bases
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/02-virtualhost">
+                                        Virtualhost
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/03-php-apache-httpd">
+                                        Apache httpd et PHP
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/04-cgi">
+                                        CGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/05-fastcgi">
+                                        FastCGI
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/06-php-multitenant">
+                                        PHP multi utilisateur
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/07-php-multiple-versions">
+                                        PHP plusieurs versions
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/08-php-scalability">
+                                        PHP évolutif
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/09-security">
+                                        Sécurité
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/10-databases">
+                                        Bases de données
+                                    </a>
+                                </li>
+                                                            <li class="">
+                                    <a href="https://lab.engineor.com/lecture-web-servers-fr/11-web-hosting">
+                                        Hébergement web
+                                    </a>
+                                </li>
+                                                    </ul>
+
+                    </nav>
+
+                
+                <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <h1 id="virtualhost">Virtualhost</h1>
+<p>Le principe des virtualhosts, ou serveurs virtuels en français, est de permettre l'hébergement de plusieurs sites web sur un même serveur, sur une même machine.</p>
+<p>Pour savoir quelle page servir, nous aurons la possibilité de différencier les requêtes sur le nom ou sur l'IP.</p>
+<p>Les exemples disponibles sur cette page peuvent être reproduits en utilisant le fichier <code>hosts</code> de votre ordinateur pour faire pointer les noms sur votre container.</p>
+<h2 id="virtualhost-bas-sur-le-nom">Virtualhost basé sur le nom</h2>
+<p>Pour les virtualhosts basés sur le nom, il faut éditer votre fichier <code>hosts</code> : <code>/etc/hosts</code> ou <code>C:\Windows\System32\drivers\etc</code>.</p>
+<p>Ajoutons une ligne pour que <code>http://demo-vhost</code> pointe sur notre propre machine :</p>
+<pre><code>127.0.0.1    localhost
+127.0.0.1    demo-vhost</code></pre>
+<h3 id="apache-httpd">Apache httpd</h3>
+<p>Comme dans <a href="01-101-server-web-theory">le chapitre précédent</a>, il s'agit de démarrer Apache httpd avec une configuration personnalisée. En regardant dans le fichier <code>hhtpd.conf</code>, on retrouve les lignes suivantes :</p>
+<pre><code>docker run httpd cat /usr/local/apache2/conf/httpd.conf | grep vhost</code></pre>
+<blockquote>
+<p>#LoadModule vhost_alias_module modules/mod_vhost_alias.so
+#Include conf/extra/httpd-vhosts.conf</p>
+</blockquote>
+<p>Dans notre cas, nous voulons utiliser les configurations complémentaires pour les virtualhosts, et allons donc décommenter la ligne <code>Include</code>.</p>
+<blockquote>
+<p>Include conf/extra/httpd-vhosts.conf</p>
+</blockquote>
+<p>À noter, il est possible d'utiliser un joker (<em>wildcard</em>), ici * pour charger plusieurs fichiers de configuration d'hôtes virtuels, par exemple <code>Include vhosts/*.conf</code>.</p>
+<p>Pour cette démonstration, nous avons copié le fichier de configuration (<code>conf/extra/httpd-vhosts.conf</code>) dans le dossier <code>02-virtualhost/demo1/config</code> avec la commande suivante :</p>
+<pre><code>docker run httpd cat /usr/local/apache2/conf/extra/httpd-vhosts.conf &gt; 02-virtualhost/demo1/config/httpd-vhosts.conf</code></pre>
+<p>Ces configurations par défaut sont basés sur les noms. On retrouve donc une directive <code>ServerName</code> dans chaque <code>VirtualHost</code>, ainsi que l'accès au <code>VirtualHost</code> pour n'importe quelle adresse IP (<code>*:80</code>).</p>
+<pre><code class="language-apache">&lt;VirtualHost *:80&gt;
+    ServerAdmin webmaster@dummy-host.example.com
+    DocumentRoot "/usr/local/apache2/docs/dummy-host.example.com"
+    ServerName dummy-host.example.com
+    ServerAlias www.dummy-host.example.com
+    ErrorLog "logs/dummy-host.example.com-error_log"
+    CustomLog "logs/dummy-host.example.com-access_log" common
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:80&gt;
+    ServerAdmin webmaster@dummy-host2.example.com
+    DocumentRoot "/usr/local/apache2/docs/dummy-host2.example.com"
+    ServerName dummy-host2.example.com
+    ErrorLog "logs/dummy-host2.example.com-error_log"
+    CustomLog "logs/dummy-host2.example.com-access_log" common
+&lt;/VirtualHost&gt;</code></pre>
+<p>Il faut donc modifier cette configuration pour utiliser nos noms :</p>
+<pre><code class="language-apache">&lt;VirtualHost *:80&gt;
+    DocumentRoot "/usr/local/apache2/htdocs/demo-vhost"
+    ServerName demo-vhost
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:80&gt;
+    DocumentRoot "/usr/local/apache2/htdocs/localhost"
+    ServerName localhost
+&lt;/VirtualHost&gt;</code></pre>
+<p>Des fichiers html sont disponibles dans <code>02-virtualhost/demo1/html/localhost</code> et <code>02-virtualhost/demo1/html/demo-vhost</code>.</p>
+<pre><code>docker run --rm -p 80:80 -v $(pwd)/02-virtualhost/demo1/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/02-virtualhost/demo1/config/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf:ro -v $(pwd)/02-virtualhost/demo1/html:/usr/local/apache2/htdocs:ro httpd</code></pre>
+<p>Vous pouvez maintenant accèder aux différents sites avec les adresses <a href="http://localhost"><a href="http://localhost">http://localhost</a></a> et <a href="http://demo-vhost"><a href="http://demo-vhost">http://demo-vhost</a></a>.</p>
+<h3 id="nginx">Nginx</h3>
+<p>Comme pour Apache httpd ci-dessus, il est possible de créer des hôtes virtuels sur Nginx. Ces hôtes virtuels sont appelés <code>server blocks</code>.</p>
+<p>La configuration Nginx, qui pour mémoire est disponible à l'adresse <code>/etc/nginx/nginx.conf</code> dans l'image Nginx, est la suivante :</p>
+<pre><code>docker run --rm nginx:latest cat /etc/nginx/nginx.conf</code></pre>
+<pre><code class="language-json">user  nginx;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+}</code></pre>
+<p>La dernière ligne indique de charger n'importe quel fichier de configuration existant dans le dossier <code>conf.d</code>.</p>
+<pre><code>docker run --rm nginx:latest ls /etc/nginx/conf.d</code></pre>
+<blockquote>
+<p>default.conf</p>
+</blockquote>
+<pre><code>docker run --rm nginx:latest cat /etc/nginx/conf.d/default.conf</code></pre>
+<pre><code class="language-json">server {
+    listen       80;
+    server_name  localhost;
+
+    #charset koi8-r;
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    #location ~ \.php$ {
+    #    root           html;
+    #    fastcgi_pass   127.0.0.1:9000;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}</code></pre>
+<p>L'illustration ci-dessus montre un <code>server block</code>. On retrouve dedans la clé <code>server_name</code> (nom du serveur), qui est donc similaire au <code>ServerName</code> d'Apache httpd.</p>
+<p>Remplaçons cette configuration par une configuration personnalisée. Nous utiliserons un fichier par hôte virtuel :</p>
+<p>localhost.conf:</p>
+<pre><code class="language-json">server {
+    listen       80;
+    server_name  localhost;
+
+    location / {
+        root   /usr/share/nginx/html/localhost;
+        index  index.html;
+    }
+}</code></pre>
+<p>demo-vhost.conf</p>
+<pre><code class="language-json">server {
+    listen       80;
+    server_name  demo-vhost;
+
+    location / {
+        root   /usr/share/nginx/html/demo-vhost;
+        index  index.html;
+    }
+}</code></pre>
+<pre><code>docker run --rm -p 80:80 -v $(pwd)/02-virtualhost/demo2/config:/etc/nginx/conf.d -v $(pwd)/02-virtualhost/demo2/html:/usr/share/nginx/html nginx:latest</code></pre>
+<h2 id="virtualhost-bas-sur-ladresse">Virtualhost basé sur l'adresse</h2>
+<p>Pour des raisons techniques, nous ne verrons pas l'utilisation d'hôtes virtuels basés sur les IP.</p>
+<p>De manière générale, le fonctionnement est similaire à celui décrit ci-dessus pour les noms, sauf que la configuration se fait au niveau réseau, c'est à dire dans le tag <code>VirtualHost</code> pour Apache httpd :</p>
+<pre><code>&lt;VirtualHost adresse_ip:80&gt;
+    DocumentRoot "/usr/local/apache2/htdocs/adresse_ip"
+&lt;/VirtualHost&gt;</code></pre>
+<h2 id="conclusion">Conclusion</h2>
+<p>Il existe plusieurs façons de faire coexister des sites sur un même serveur. En plus des solutions vues ici, on peut penser au mode <code>userdir</code> d'Apache httpd qui permets d'exposer des dossiers dans un répertoire spécifique de chaque utilisateur du système (traditionnellement <code>public_html</code>), mais de manière générale ces solutions sont laissées à l'écart en faveur de solutions plus modernes et plus containerisées.</p>
+<p>Maintenant que nous avons bien compris les différentes configurations possible permettant d'exposer des sites statiques, nous allons voir comment <a href="03-php-apache-httpd">rendre les sites dynamiques avec PHP sur Apache httpd</a>.</p>
+                </section>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="container-fluid">
+                <p class="text-muted">
+                    website generated with <a href="http://couscous.io" title="Markdown website generator">Couscous</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yastatic.net/highlightjs/8.2/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>
