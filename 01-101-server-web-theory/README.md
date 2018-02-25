@@ -238,7 +238,7 @@ Pour trouver ces chemins, il faut donc trouver la configuration du serveur web, 
 Dans le container httpd la configuration se trouve dans `/usr/local/apache2/conf/httpd.conf` d'après la documentation disponible sur le [Docker Hub de l'image httpd](https://hub.docker.com/_/httpd/).
 
 ```bash
-docker run httpd cat /usr/local/apache2/conf/httpd.conf
+docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf
 ```
 
 Comme vous pouvez le constater la documentation d'Apache httpd est assez longue (et commentée). Parmis toutes les options et configurations, nous sommes uniquement intéressé par le `DocumentRoot` pour le moment.
@@ -246,7 +246,7 @@ Comme vous pouvez le constater la documentation d'Apache httpd est assez longue 
 Vous pouvez donc utiliser la commande suivante pour filtrer uniquement la valeur de la racine :
 
 ```bash
-docker run httpd cat /usr/local/apache2/conf/httpd.conf | grep DocumentRoot
+docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf | grep DocumentRoot
 ```
 
 Il est donc maintenant possible de surcharger cette configuration avec notre configuration personnalisée.
@@ -254,7 +254,7 @@ Il est donc maintenant possible de surcharger cette configuration avec notre con
 Le contenu de la configuration du container a été copié dans le dossier `01-101-server-web-theory/demo4/config` grâce à la commande suivante :
 
 ```bash
-docker run httpd cat /usr/local/apache2/conf/httpd.conf > 01-101-server-web-theory/demo4/config/httpd.conf
+docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf > 01-101-server-web-theory/demo4/config/httpd.conf
 ```
 
 Dans le fichier `01-101-server-web-theory/demo4/config/httpd.conf`, la valeur de `DocumentRoot` a été changé pour `/code` :
@@ -271,7 +271,7 @@ Notez que la valeur de l'instruction `Directory` suivante est aussi mise à jour
 Il reste ensuite à monter notre fichier html dans le dossier `/code` et notre configuration dans le dossier `/usr/local/apache2/conf/httpd.conf`.
 
 ```
-docker run -p 80:80 -v $(pwd)/01-101-server-web-theory/demo4/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/01-101-server-web-theory/demo4/html:/code:ro httpd
+docker run --rm -p 80:80 -v $(pwd)/01-101-server-web-theory/demo4/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/01-101-server-web-theory/demo4/html:/code:ro httpd
 ```
 
 ### Nginx
@@ -279,19 +279,19 @@ docker run -p 80:80 -v $(pwd)/01-101-server-web-theory/demo4/config/httpd.conf:/
 Dans le container nginx la configuration se trouve dans `/etc/nginx/nginx.conf` d'après la documentation disponible sur le [Docker Hub de l'image nginx](https://hub.docker.com/_/nginx/).
 
 ```bash
-docker run nginx cat /etc/nginx/nginx.conf
+docker run --rm nginx cat /etc/nginx/nginx.conf
 ```
 
 Comme vous pouvez le constater la documentation de nginx est assez courte (et non commentée). Parmis toutes les options et configurations, nous sommes uniquement intéressé par le `include /etc/nginx/conf.d/*.conf;` pour le moment. Celui-ci nous indique que les fichiers de configuration du dossier `conf.d` sont chargés automatiquement.
 
 ```bash
-docker run nginx ls /etc/nginx/conf.d
+docker run --rm nginx ls /etc/nginx/conf.d
 ```
 
 > default.conf
 
 ```bash
-docker run nginx cat /etc/nginx/conf.d/default.conf
+docker run --rm nginx cat /etc/nginx/conf.d/default.conf
 ```
 
 Comme vous pouvez le constater, ce fichier contient les lignes suivantes :
@@ -307,7 +307,7 @@ Il est donc maintenant possible de surcharger cette configuration avec notre con
 Le contenu de la configuration du container a été copié dans le dossier `01-101-server-web-theory/demo5/config` grâce à la commande suivante :
 
 ```bash
-docker run nginx cat /etc/nginx/conf.d/default.conf > 01-101-server-web-theory/demo5/config/default.conf
+docker run --rm nginx cat /etc/nginx/conf.d/default.conf > 01-101-server-web-theory/demo5/config/default.conf
 ```
 
 Dans le fichier `01-101-server-web-theory/demo5/config/default.conf`, la valeur de `root` a été changé pour `/code` :
@@ -321,7 +321,7 @@ location = / {
 Il reste ensuite à monter notre fichier html dans le dossier `/code` et notre configuration dans le dossier `/etc/nginx/conf.d/`.
 
 ```
-docker run -p 80:80 -v $(pwd)/01-101-server-web-theory/demo5/config/default.conf:/etc/nginx/conf.d/default.conf:ro -v $(pwd)/01-101-server-web-theory/demo5/html:/code:ro nginx
+docker run --rm -p 80:80 -v $(pwd)/01-101-server-web-theory/demo5/config/default.conf:/etc/nginx/conf.d/default.conf:ro -v $(pwd)/01-101-server-web-theory/demo5/html:/code:ro nginx
 ```
 
 ## Conclusion

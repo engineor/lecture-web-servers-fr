@@ -22,7 +22,7 @@ Ajoutons une ligne pour que `http://demo-vhost` pointe sur notre propre machine 
 Comme dans [le chapitre précédent](01-101-server-web-theory), il s'agit de démarrer Apache httpd avec une configuration personnalisée. En regardant dans le fichier `hhtpd.conf`, on retrouve les lignes suivantes :
 
 ```
-docker run httpd cat /usr/local/apache2/conf/httpd.conf | grep vhost
+docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf | grep vhost
 ```
 
 > \#LoadModule vhost_alias_module modules/mod_vhost_alias.so
@@ -37,7 +37,7 @@ Dans notre cas, nous voulons utiliser les configurations complémentaires pour l
 Pour cette démonstration, nous avons copié le fichier de configuration (`conf/extra/httpd-vhosts.conf`) dans le dossier `02-virtualhost/demo1/config` avec la commande suivante :
 
 ```
-docker run httpd cat /usr/local/apache2/conf/extra/httpd-vhosts.conf > 02-virtualhost/demo1/config/httpd-vhosts.conf
+docker run --rm httpd cat /usr/local/apache2/conf/extra/httpd-vhosts.conf > 02-virtualhost/demo1/config/httpd-vhosts.conf
 ```
 
 Ces configurations par défaut sont basés sur les noms. On retrouve donc une directive `ServerName` dans chaque `VirtualHost`, ainsi que l'accès au `VirtualHost` pour n'importe quelle adresse IP (`*:80`).
