@@ -113,7 +113,7 @@
 <pre><code>127.0.0.1    localhost
 127.0.0.1    demo-vhost</code></pre>
 <h3 id="apache-httpd">Apache httpd</h3>
-<p>Comme dans <a href="01-101-server-web-theory">le chapitre précédent</a>, il s'agit de démarrer Apache httpd avec une configuration personnalisée. En regardant dans le fichier <code>hhtpd.conf</code>, on retrouve les lignes suivantes :</p>
+<p>Comme dans <a href="01-101-server-web-theory">le chapitre précédent</a>, il s'agit de démarrer Apache httpd avec une configuration personnalisée. En regardant dans le fichier <code>httpd.conf</code>, on retrouve les lignes suivantes :</p>
 <pre><code>docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf | grep vhost</code></pre>
 <blockquote>
 <p>#LoadModule vhost_alias_module modules/mod_vhost_alias.so
