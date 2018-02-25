@@ -19,7 +19,7 @@ Ajoutons une ligne pour que `http://demo-vhost` pointe sur notre propre machine 
 
 ### Apache httpd
 
-Comme dans [le chapitre précédent](01-101-server-web-theory), il s'agit de démarrer Apache httpd avec une configuration personnalisée. En regardant dans le fichier `hhtpd.conf`, on retrouve les lignes suivantes :
+Comme dans [le chapitre précédent](01-101-server-web-theory), il s'agit de démarrer Apache httpd avec une configuration personnalisée. En regardant dans le fichier `httpd.conf`, on retrouve les lignes suivantes :
 
 ```
 docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf | grep vhost

@@ -92,4 +92,4 @@ Bien que n'étant pas particulièrement efficace, cette solution permets de mett
 
 Un certain nombre de restrictions concernant la gestion granulaire des utilisateurs et l'évolutivité n'en font pas la solution la plus adéquate pour tous les types de projets.
 
-D'autres solutions existent tels que l'utilisation des [scripts CGI](04-cgi) détaillée dans le chapitre suivant.
+D'autres solutions existent tels que l'utilisation des [scripts CGI](/04-cgi) détaillée dans le chapitre suivant.

@@ -50,3 +50,5 @@ Un chapitre complet sera dédié à l'évolutivité horizontale de l'infrastruct
 ## Conclusion
 
 FastCGI est une évolution pratique de CGI qui nous permet une meilleure évolutivité et une gestion des processus plus granulaire.
+
+Dans le chapitre suivant, nous verrons comment profiter de ces avantages pour mettre en place un serveur d'hébergement en [exécutant PHP avec différents utilisateurs](/06-php-multitenant).

@@ -24,4 +24,4 @@ Les images suivantes sont utilisées :
 
 ## Commencer le cours
 
-La première leçon rappelle [les bases des serveurs web](01-101-server-web-theory).
+La première leçon rappelle [les bases des serveurs web](/01-101-server-web-theory).

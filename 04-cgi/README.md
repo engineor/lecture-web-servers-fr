@@ -291,4 +291,4 @@ Pour réaliser cette tâche, vous aurez besoin de cette documentation : [C++ Web
 
 Grâce à cette technique, il est possible de créer des scripts et logiciels permettant de rendre dynamique les pages web, et ce dans notre langage de préférence, et de préférence dans le langage le plus performant pour la tâche à réaliser.
 
-Dans le chapitre suivant, nous allons voir une autre technique un peu plus moderne et plus légère : l'[utilisation de FastCGI](05-fastcgi).
+Dans le chapitre suivant, nous allons voir une autre technique un peu plus moderne et plus légère : l'[utilisation de FastCGI](/05-fastcgi).
