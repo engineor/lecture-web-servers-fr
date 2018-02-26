@@ -120,12 +120,88 @@
 <p>Pour exécuter du Python3 en FastCGI, il est possible d'utiliser des serveurs comme <a href="https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-uwsgi-web-server-with-nginx">uWSGI</a> ou <a href="https://www.digitalocean.com/community/tutorials/how-to-deploy-python-wsgi-applications-using-a-cherrypy-web-server-behind-nginx">CherryPy</a>.</p>
 <h3 id="volutivit">Évolutivité</h3>
 <p>Un chapitre complet sera dédié à l'évolutivité horizontale de l'infrastructure grâce à PHP-FPM plus tard dans le cours.</p>
-<h2 id="demo--exercice--php-fpm-en-local">Demo / Exercice : PHP-FPM en local</h2>
-<h3 id="avec-apache-httpd">Avec Apache httpd</h3>
-<h3 id="avec-nginx">Avec Nginx</h3>
 <h2 id="demo--exercice--php-fpm-distant">Demo / Exercice : PHP-FPM distant</h2>
+<p>Pour cet exercice, nous aurons besoin d'un serveur http et d'un serveur FastCGI (<code>php-fpm</code>).</p>
+<p>Pour l'exemple, nous utiliserons le script php suivant :</p>
+<pre><code class="language-php">&lt;!Doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;PHP-FPM&lt;/title&gt;
+        &lt;meta charset="utf-8"&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;PHP-FPM&lt;/h1&gt;
+        &lt;h2&gt;&lt;?= PHP_VERSION ?&gt;&lt;/h2&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h3 id="avec-apache-httpd">Avec Apache httpd</h3>
+<p>Récupérer la configuation d'Apache httpd :</p>
+<pre><code>docker run --rm httpd cat /usr/local/apache2/conf/httpd.conf &gt; 05-fastcgi/demo1/config/httpd.conf</code></pre>
+<p>Activer le mode <code>proxy_fcgi</code></p>
+<pre><code>LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so</code></pre>
+<p>Configurer ensuite la délégation des fichiers <code>.php</code> à PHP-FPM :</p>
+<pre><code>ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://php:9000/var/www/html/$1
+&lt;Directory "/usr/local/apache2/htdocs"&gt;
+    DirectoryIndex index.php
+&lt;/Directory&gt;</code></pre>
+<p>Il faut maintenant lancer le container PHP-FPM (avec le code dans <code>/var/www/html</code> comme indiqué dans la directive <code>ProxyPassMatch</code>) : </p>
+<pre><code>docker run --name php-05-02 --rm -p 9000:9000 -v $(pwd)/05-fastcgi/demo1/html:/var/www/html:ro php:7.2-fpm</code></pre>
+<p>Il reste à lancer le container Apache httpd :</p>
+<pre><code>docker run --rm --link php-05-02:php -p 80:80 -v $(pwd)/05-fastcgi/demo1/config/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro -v $(pwd)/05-fastcgi/demo1/html:/scripts:ro httpd</code></pre>
+<p>Si on arrête le container PHP-FPM et on recharge la page, on aura une erreur 503 car Apache httpd n'arrive plus à communiquer avec le serveur PHP.</p>
+<h3 id="avec-nginx">Avec Nginx</h3>
+<p>Récupérer la configuration du bloc serveur d'Nginx :</p>
+<pre><code>docker run --rm nginx cat /etc/nginx/conf.d/default.conf &gt; 05-fastcgi/demo2/config/default.conf</code></pre>
+<p>Modifier la configuration pour faire passer la requête à PHP-FPM lors de l'execution d'un fichier finissant en <code>.php</code> :</p>
+<pre><code class="language-nginx">location / {
+    root   /usr/share/nginx/html;
+    index  index.html index.htm;
+}
+
+# proxy the PHP scripts to Apache listening on 127.0.0.1:80
+#
+#location ~ \.php$ {
+#    proxy_pass   http://127.0.0.1;
+#}
+
+# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+#
+location ~ \.php$ {
+    root           html;
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    include        fastcgi_params;
+}</code></pre>
+<p>Lançons ensuite le serveur nginx seul (sans lancer PHP-FPM), et regardons comment la page <a href="http://localhost/index.php"><a href="http://localhost/index.php">http://localhost/index.php</a></a> réagis :</p>
+<pre><code>docker run --rm -p 80:80 -v $(pwd)/05-fastcgi/demo2/config/default.conf:/etc/nginx/conf.d/default.conf:ro -v $(pwd)/05-fastcgi/demo2/html:/code:ro nginx</code></pre>
+<p>En regardant les logs, on trouve la ligne suivante, qui nous indique que la redirection vers un serveur local a échoué.</p>
+<blockquote>
+<p>2018/02/26 06:25:16 [error] 5#5: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.17.0.1, server: localhost, request: &quot;GET /index.php HTTP/1.1&quot;, upstream: &quot;fastcgi://127.0.0.1:9000&quot;, host: &quot;localhost&quot;</p>
+</blockquote>
+<p>Comme nous executons l'environnement dans un environnement Docker, nous devrons utiliser le nom du container à la place de l'IP locale pour communiquer avec PHP-FPM :</p>
+<pre><code>#fastcgi_pass   127.0.0.1:9000;
+fastcgi_pass   php-05-02:9000;</code></pre>
+<p>Redémarrons le serveur Nginx, toujours avec le code dans <code>/code</code>, mais en ajoutant un lien vers <code>php-05-02</code>, le container PHP-FPM que nous allons démarrer par la suite (<code>--link php-05-02:php</code>).</p>
+<pre><code>docker run --rm -p 80:80 --link php-05-02:php -v $(pwd)/05-fastcgi/demo2/config/default.conf:/etc/nginx/conf.d/default.conf:ro -v $(pwd)/05-fastcgi/demo2/html:/code:ro nginx</code></pre>
+<p>Charger la page resulte toujours dans une erreur 502 car nous n'avons toujours pas démarré PHP-FPM.</p>
+<pre><code>docker run --name php-05-02 --rm -p 9000:9000 -v $(pwd)/05-fastcgi/demo2/html:/scripts:ro php:7.2-fpm</code></pre>
+<p>Notez le point de montage <code>/scripts</code>, qui correspond à la configuration disponible sous la clé <code>fastcgi_param</code> dans Nginx.</p>
+<p>Rechargez la page et tout fonctionne.</p>
+<h2 id="demo--exercice--php-fpm-en-local">Demo / Exercice : PHP-FPM en local</h2>
+<p>La démonstration de l'exercice précédent montre l'utilisation de PHP-FPM sur un serveur tiers (ou du moins un container tiers dans notre cas).</p>
+<p>Il est aussi possible d'executer PHP-FPM sur la même machine que le serveur http, et de s'y connecter sans passer par le réseau grâce aux sockets fichiers.</p>
 <h3 id="avec-apache-httpd-1">Avec Apache httpd</h3>
+<p>Ajouter PHP-FPM à l'image <code>httpd</code> grâce à un <code>Dockerfile</code>.</p>
+<p>Modifier la configuration de PHP-FPM pour écouter sur un socket fichier :</p>
+<pre><code>listen = /var/run/php7-fpm/DOMAINNAME.socket</code></pre>
+<p>Changer le <code>ProxyPassMatch</code> en conséquence.</p>
 <h3 id="avec-nginx-1">Avec Nginx</h3>
+<p>Voir la documentation sur Rackspace : <a href="https://support.rackspace.com/how-to/install-nginx-and-php-fpm-running-on-unix-file-sockets/">Nginx avec PHP-FPM sur un socket UNIX fichier</a></p>
+<p>Ajouter PHP-FPM à l'image <code>nginx</code> grâce à un <code>Dockerfile</code>.</p>
+<p>Modifier la configuration de PHP-FPM pour écouter sur un socket fichier :</p>
+<pre><code>listen = /var/run/php7-fpm/DOMAINNAME.socket</code></pre>
 <h2 id="profiter-des-avantages-dun-serveur-fastcgi-en-php">Profiter des avantages d'un serveur FastCGI en PHP</h2>
 <p><a href="https://secure.php.net/manual/fr/function.fastcgi-finish-request.php"><code>fastcgi_finish_request</code></a></p>
 <blockquote>
