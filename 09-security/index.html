@@ -126,9 +126,8 @@
 </ul></li>
 </ul></li>
 </ul>
-<pre><code>&lt;Files ~ "\.ht"&gt;
-    Order allow,deny
-    Deny from all
+<pre><code>&lt;Files ".ht*"&gt;
+    Require all denied
 &lt;/Files&gt;</code></pre>
 <pre><code>location ~ /\.ht {
     deny  all;
