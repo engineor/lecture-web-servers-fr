@@ -104,6 +104,57 @@
                 
                 <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
                     <h1 id="executer-php-avec-diffrents-utilisateurs">Executer PHP avec différents utilisateurs</h1>
+<p>Dans le chapitre précédent, nous avons vu l'utilisation de PHP-FPM pour executer PHP. En se basant sur le même concept, ce chapitre va montrer la mise en place d'un serveur web multi-site et multi-utilisateurs.</p>
+<h2 id="nginx-comme-pure-proxy">Nginx comme pure proxy</h2>
+<p>La première méthode va consister à utiliser Nginx uniquement comme un proxy vers les différents PHP-FPM.</p>
+<p>Cette méthode, bien que fonctionnelle pour des fichiers PHP, ne nous permettra pas de charger des fichiers statiques sans passer par le container php-fpm.</p>
+<p>Les fichiers disponibles dans <code>06-php-multitenant/demo1</code> sont basés sur ceux de la démo Nginx du chapitre hôtes virtuels et ceux du chapitre FastCGI.</p>
+<pre><code>server {
+    listen       80;
+    server_name  demo-vhost;
+
+    location / {
+        fastcgi_pass   php-demo-vhost:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+}
+
+server {
+    listen       80;
+    server_name  localhost;
+
+    location / {
+        fastcgi_pass   php-localhost:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+}</code></pre>
+<pre><code>docker run --name php-localhost --user www-data -d --rm -p 9000 -v $(pwd)/06-php-multitenant/demo1/html/localhost:/scripts php:7.2-fpm</code></pre>
+<pre><code>docker run --name php-demo-vhost --user nobody -d --rm -p 9000 -v $(pwd)/06-php-multitenant/demo1/html/demo-vhost:/scripts php:7.2-fpm</code></pre>
+<p><strong>Attention, les dossiers ci-dessus ne sont pas <code>:ro</code></strong></p>
+<pre><code>docker run --rm -p 80:80 -v $(pwd)/06-php-multitenant/demo1/config:/etc/nginx/conf.d nginx:latest</code></pre>
+<p>Ici, les fichiers sont utilisés sur les containers, donc non accessibles d'un utilisateur à l'autre. On utilise par ailleurs des utilisateurs différent pour lancer le process Nginx.</p>
+<h2 id="un-seul-container-nginx--php">Un seul container Nginx + php</h2>
+<p>Pour cet exemple, on va utiliser un seul container Nginx + PHP.</p>
+<pre><code>FROM nginx:latest
+
+RUN groupadd site1 &amp;&amp;  useradd -g site1 site1 &amp;&amp; \
+    groupadd site2 &amp;&amp;  useradd -g site2 site2
+
+...</code></pre>
+<p>Pour le reste, il faut configurer des pools dans php-fpm comme indiqué dans cet article <a href="https://www.digitalocean.com/community/tutorials/how-to-host-multiple-websites-securely-with-nginx-and-php-fpm-on-ubuntu-14-04"><a href="https://www.digitalocean.com/community/tutorials/how-to-host-multiple-websites-securely-with-nginx-and-php-fpm-on-ubuntu-14-04">https://www.digitalocean.com/community/tutorials/how-to-host-multiple-websites-securely-with-nginx-and-php-fpm-on-ubuntu-14-04</a></a>.</p>
+<p>Les dossiers contenant les sites (<code>root</code> déclarés dans les server blocks) doivent être lisible par l'utilisateur qui lance Nginx :</p>
+<pre><code>docker run --rm nginx cat /etc/nginx/nginx.conf</code></pre>
+<blockquote>
+<p>user  nginx;</p>
+</blockquote>
+<p><a href="http://nginx.org/en/docs/ngx_core_module.html#user">Documentation Nginx user (et groupe)</a></p>
+<p>Il faut donc ajouter un groupe (<code>www-data</code> ?) dans la configuration, puis donner les droits en lecture sur les document roots à <code>www-data</code> pour la lecture, et les utilisateurs <code>site1</code> et <code>site2</code> en écriture.</p>
+<p>Il faut ensuite configurer les pools FPM pour qu'ils s'éxecutent en tant que <code>site1</code> et <code>site2</code>.</p>
+<p><strong>Attention</strong> : mettre <code>site1</code> ou <code>site2</code> dans le groupe <code>www-data</code> ouvrirait une faille de sécurité, car <code>site2</code> aurait la possibilité de venir lire les fichiers de <code>site1</code>.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>Dans ce chapitre nous avons vu comment utiliser PHP-FPM pour faire un serveur multi-utilisateurs.</p>
 <p>Le chapitre suivant couvre une autre possibilité : un serveur avec <a href="/07-php-multiple-version">plusieurs versions de PHP</a>.</p>

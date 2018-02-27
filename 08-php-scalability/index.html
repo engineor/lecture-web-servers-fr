@@ -104,12 +104,35 @@
                 
                 <section id="content" class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
                     <h1 id="rendre-lexecution-de-php-volutive-scalable">Rendre l'execution de PHP évolutive (scalable)</h1>
-<p>PHP-FPM
-Nginx
-docker-compose
-Redis pour les sessions
-FlySystem pour le filesystem
-Varnish</p>
+<h2 id="multiplier-les-workers-php-avec-nginx">Multiplier les workers PHP avec Nginx</h2>
+<h3 id="demo-1--laisser-faire-docker">Demo 1 : laisser faire docker</h3>
+<pre><code>version: "3.3"
+services:
+    app:
+        image: nginx:latest
+        ports:
+            - 80:80
+        volumes:
+            - ./html:/var/www/html:ro
+    php:
+        image: php:7.2-fpm
+        ports:
+            - 9000
+        volumes:
+            - ./html:/var/www/html</code></pre>
+<pre><code>docker-compose -f 08-php-scalability/demo1/docker-compose.yml up -d --scale php=3</code></pre>
+<p>Rechargez la page pour voir changer la ligne <code>System</code>.</p>
+<p>Dans ce cas précis, Docker (docker-compose et son réseau privé) s'occupe de distribuer sur les 3 containers PHP.</p>
+<h3 id="demo-2--configurer-nginx">Demo 2 : configurer Nginx</h3>
+<p>Manuellement, il faut changer la config Nginx (voir fichiers demo2)</p>
+<pre><code>docker-compose -f 08-php-scalability/demo2/docker-compose.yml up -d</code></pre>
+<h2 id="sessions">Sessions</h2>
+<p>Voir demo3 pour le problème</p>
+<p>Voir demo4 pour la solution avec Redis en session handler</p>
+<h2 id="gnration-de-fichiers">Génération de fichiers</h2>
+<p>Read only file system + data volume</p>
+<h2 id="varnish">Varnish</h2>
+<p>Si vous désirez tester une installation incluant un cache http (varnish), rendez-vous sur ce tutoriel : <a href="https://blog.nicolargo.com/2014/10/infra-lemp-docker.html"><a href="https://blog.nicolargo.com/2014/10/infra-lemp-docker.html">https://blog.nicolargo.com/2014/10/infra-lemp-docker.html</a></a></p>
                 </section>
 
             </div>
