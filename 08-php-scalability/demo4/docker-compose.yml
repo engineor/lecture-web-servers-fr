@@ -12,27 +12,36 @@ services:
             - php-2
             - php-3
     php-1:
-        image: php:7.2-fpm
+        build:
+            context: .
+            dockerfile: config/Dockerfile
         ports:
             - 9000
         volumes:
             - ./html:/var/www/html
+            - ./config/session.ini:/usr/local/etc/php/conf.d/session.ini:ro
         depends_on:
             - redis
     php-2:
-        image: php:7.2-fpm
+        build:
+            context: .
+            dockerfile: config/Dockerfile
         ports:
             - 9000
         volumes:
             - ./html:/var/www/html
+            - ./config/session.ini:/usr/local/etc/php/conf.d/session.ini:ro
         depends_on:
             - redis
     php-3:
-        image: php:7.2-fpm
+        build:
+            context: .
+            dockerfile: config/Dockerfile
         ports:
             - 9000
         volumes:
             - ./html:/var/www/html
+            - ./config/session.ini:/usr/local/etc/php/conf.d/session.ini:ro
         depends_on:
             - redis
     redis:
