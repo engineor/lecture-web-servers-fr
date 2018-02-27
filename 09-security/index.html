@@ -119,8 +119,20 @@
 <li>Serveur
 <ul>
 <li>hardening (less software, specific servers, chown and chmod, limit multitenants, 2FA)</li>
+<li>http
+<ul>
+<li>Directory/Filematch et deny</li>
+<li>location et deny  all;</li>
+</ul></li>
 </ul></li>
 </ul>
+<pre><code>&lt;Files ~ "\.ht"&gt;
+    Order allow,deny
+    Deny from all
+&lt;/Files&gt;</code></pre>
+<pre><code>location ~ /\.ht {
+    deny  all;
+}</code></pre>
                 </section>
 
             </div>
