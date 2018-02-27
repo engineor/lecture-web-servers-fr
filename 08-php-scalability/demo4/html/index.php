@@ -8,4 +8,5 @@ if (!isset($_SESSION['nb'])) {
 
 $_SESSION['nb']++;
 
+var_dump(gethostname());
 var_dump($_SESSION['nb']);
