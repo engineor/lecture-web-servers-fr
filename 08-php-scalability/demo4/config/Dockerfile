@@ -1,4 +1,4 @@
-FROM php:7.2-fpm
+FROM php:7.4.28-fpm
 
 RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
