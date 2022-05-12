@@ -1,4 +1,4 @@
-FROM nginx:latest
+FROM nginx:1.21
 
 RUN apt-get update \
  && apt-get install --no-install-recommends --no-install-suggests -y gnupg1 apt-transport-https ca-certificates wget \
